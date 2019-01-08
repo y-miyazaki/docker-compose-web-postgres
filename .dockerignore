@@ -13,3 +13,5 @@ README.md
 .env
 .env*
 docker-compose.yml
+.dockerignore
+docker-compose-web-postgres

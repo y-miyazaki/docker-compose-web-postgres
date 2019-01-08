@@ -32,6 +32,8 @@ RUN dep ensure -v -vendor-only=true && \
 
 FROM golang:1.11.4-alpine3.8
 
+WORKDIR /go/src/github.com/y-miyazaki/docker-compose-web-postgres
+
 COPY --from=0 /go/src/github.com/y-miyazaki/docker-compose-web-postgres /go/src/github.com/y-miyazaki/docker-compose-web-postgres
 
 RUN apk update && \

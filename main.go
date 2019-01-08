@@ -1,12 +1,18 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 )
+
+// TestResponse responses common json data.
+type TestResponse struct {
+	Message string `json:"message,omitempty"`
+}
 
 func main() {
 	r := chi.NewRouter()
@@ -29,4 +35,18 @@ func Router(r *chi.Mux) {
 // test function.
 func test(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("test")
+	response := TestResponse{
+		Message: "test",
+	}
+	ResponseJSON(w, 200, response)
+}
+
+// ResponseJSON function response as json with ResponseWriter
+func ResponseJSON(w http.ResponseWriter, code int, data interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	if data != nil {
+		json, _ := json.Marshal(data)
+		_, _ = w.Write(json)
+	}
 }

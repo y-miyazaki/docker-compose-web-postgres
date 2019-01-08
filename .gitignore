@@ -8,3 +8,4 @@ _*
 cover/*.html
 **/.DS_Store
 .env
+docker-compose-web-postgres

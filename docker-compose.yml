@@ -49,11 +49,10 @@ services:
         build: 
             context: ./build
             dockerfile: Proxy.Dockerfile
+        env_file: 
+            - ./config/docker/proxy/${ENVIRONMENT}.env
         environment:
             - ENVIRONMENT
-            - PROXY_ROLE
-            - PROXY_NAMESERVER
-            - PROXY_DOMAIN
         ports:
             - "${PROXY_HTTP_OUT_PORT}:${PROXY_HTTP_PORT}" # host:container
             - "${PROXY_HTTPS_OUT_PORT}:${PROXY_HTTPS_PORT}" # host:container
