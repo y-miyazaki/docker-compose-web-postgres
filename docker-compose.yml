@@ -1,0 +1,102 @@
+version: '3'
+volumes:
+    object-vol: # Volume to host s3 service data locally.
+        driver: 'local'
+    data-vol: # Volume to host db service data locally.
+        driver: 'local'
+services: 
+    s3:
+        image: ${S3_IMAGE}
+        ports:
+            - "${S3_OUT_PORT}:${S3_PORT}"
+        volumes:
+            - object-vol:/export
+        environment:
+            - MINIO_ACCESS_KEY=${S3_ACCESS_KEY}
+            - MINIO_SECRET_KEY=${S3_SECRET_KEY}
+        command: server /export
+        container_name: ${APPLICATION}-storage-cont
+    db:
+        image: ${DB_IMAGE}
+        ports:
+            - "${DB_OUT_PORT}:${DB_PORT}"
+        volumes:
+            - data-vol:/var/lib/postgresql/data
+            - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+        environment:
+            - POSTGRES_USER=${DB_USER}
+            - POSTGRES_DBNAME=${DB_DBNAME}   
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_PORT=${DB_PORT}
+        container_name: ${APPLICATION}-db-cont
+    redis:
+        image: ${KVS_IMAGE}
+        ports: 
+            - "${KVS_OUT_PORT}:${KVS_PORT}"
+        container_name: ${APPLICATION}-kvs-cont
+    fluentd:
+        image: ${FLUENTD_IMAGE}
+        container_name: ${APPLICATION}-fluentd-cont
+        ports:
+            - "9292:9292"
+            - "9880:9880"
+            - "24220:24220"
+            - "24224:24224"
+            - "24230:24230"
+        volumes:
+            - ./fluentd/fluentd.${ENVIRONMENT}.conf:/data/fluentd/fluentd.conf
+    proxy:
+        build: 
+            context: ./build
+            dockerfile: Proxy.Dockerfile
+        environment:
+            - ENVIRONMENT
+            - PROXY_ROLE
+            - PROXY_NAMESERVER
+            - PROXY_DOMAIN
+        ports:
+            - "${PROXY_HTTP_OUT_PORT}:${PROXY_HTTP_PORT}" # host:container
+            - "${PROXY_HTTPS_OUT_PORT}:${PROXY_HTTPS_PORT}" # host:container
+        links:
+            - app:app
+            # - ${APPLICATION}-fluentd-cont:fluentd
+            - fluentd:fluentd
+        depends_on:
+            - app
+            - fluentd
+        container_name: ${APPLICATION}-proxy-cont
+        logging:
+            driver: "fluentd"
+            options:
+                fluentd-address: "localhost:24224"
+                tag: "${FLUENTD_TAG_SERVICE}.${FLUENTD_TAG_NGINX}.{{.Name}}.stdout"
+    app:
+        env_file:
+            - config/docker/${ENVIRONMENT}.env
+        environment: 
+            - ENVIRONMENT
+        build: 
+            context: .
+            dockerfile: Dockerfile
+            args:
+                - SSH_KEY=${SSH_KEY}
+        links:
+            - db:db 
+            - s3:s3
+            - redis:redis
+#            - fluentd:fluentd
+        depends_on:
+            - db
+            - s3
+            - redis
+            - fluentd
+        ports:
+            - "${APP_OUT_PORT}:${APP_PORT}" # host:container
+        volumes:
+            - .:${WORKING_DIR}
+        container_name: ${APPLICATION}-app-cont
+        logging:
+            driver: "fluentd"
+            options:
+                fluentd-address: "localhost:24224"
+                tag: "${FLUENTD_TAG_SERVICE}.${FLUENTD_TAG_APP}.{{.Name}}.stdout"

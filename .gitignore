@@ -1,0 +1,10 @@
+.vscode
+.idea
+.DB
+.history
+vendor
+tmp
+_*
+cover/*.html
+**/.DS_Store
+.env

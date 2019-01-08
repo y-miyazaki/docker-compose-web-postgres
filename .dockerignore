@@ -1,0 +1,15 @@
+.DS_Store
+.vscode
+.github
+.git
+.gitignore
+build
+cover
+tmp
+*Dockerfile*
+config/docker
+Makefile
+README.md
+.env
+.env*
+docker-compose.yml
