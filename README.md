@@ -14,17 +14,22 @@ docker-compose -f docker-compose.yml build
 docker-compose -f docker-compose.yml up
 ```
 
+# Proxy and App add netowork
+```
+docker network create app_proxy
+```
+
 # App build and run with docker
 ```
 docker build --rm -f build/Dockerfile --build-arg SSH_KEY="$(cat {private sshkey path})" -t app:latest . 
-docker run --rm -d --name app app:latest
+docker run --rm -d --net app_proxy --name app app:latest
 ```
 ex)
 ```
 docker build --rm -f build/Dockerfile --build-arg SSH_KEY="$(cat ~/.ssh/id_rsa)" -t app:latest . 
-docker run --rm -d --name app app:latest
+docker run --rm -d --net app_proxy --env-file=config/docker/app/local.env --name app app:latest
 # if you want to direct access this container...
-docker run --rm -d --env-file=config/docker/app/local.env -p 8080:8080 --name app app:latest
+docker run --rm -d --net app_proxy --env-file=config/docker/app/local.env -p 8080:8080 --name app app:latest
 ```
 
 # Proxy build and run with docker
