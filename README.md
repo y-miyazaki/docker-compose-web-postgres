@@ -48,3 +48,8 @@ docker run --rm -d --net app_proxy --env-file=config/docker/app/local.env -p 808
 docker build --rm -f build/Proxy.Dockerfile -t proxy:latest .
 docker run --rm -d --net app_proxy --env-file=config/docker/proxy/local.env -p 80:80 -p 443:443 --link app:app --name proxy proxy:latest
 ```
+
+# Access web
+```
+curl localhost
+```
