@@ -1,5 +1,7 @@
 # docker compose and docker for web 
-I create 2way build.
+This repository is sample docker for golang and postgres and redis and fluentd and s3.
+I created 2 way build.
+
 * docker-compose
 * docker 
 
