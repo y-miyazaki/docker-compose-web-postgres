@@ -7,8 +7,9 @@ I create 2way build.
 
 ## build and up
 ```
-# .env.localは修正せず、.envを修正してください。
-# docker-compose.ymlで利用される環境変数リストです。
+# .env.local is local sample.
+# if you want to use docker-compose, please copy .env.local to .env.
+# .env file use for docker-compose.yml.
 cp -p .env.local .env
 # github.comに設定されている
 # SSH_KEY pathはあなたに環境に合わせてください。
@@ -33,7 +34,10 @@ ex)
 ```
 docker build --rm -f build/Dockerfile --build-arg SSH_KEY="$(cat ~/.ssh/id_rsa)" -t app:latest . 
 docker run --rm -d --net app_proxy --env-file=config/docker/app/local.env --name app app:latest
-# if you want to direct access this container...
+```
+
+### If you want to direct access this container.
+```
 docker run --rm -d --net app_proxy --env-file=config/docker/app/local.env -p 8080:8080 --name app app:latest
 ```
 
