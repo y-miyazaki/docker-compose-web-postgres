@@ -1,7 +1,11 @@
-# docker compose for web
-自分用のサンプルdocker-compose設定です。
+# docker compose and docker for web 
+I create 2way build.
+* docker-compose
+* docker 
 
-# build and up with docker-compose
+# docker-compose
+
+## build and up
 ```
 # .env.localは修正せず、.envを修正してください。
 # docker-compose.ymlで利用される環境変数リストです。
@@ -14,12 +18,13 @@ docker-compose -f docker-compose.yml build
 docker-compose -f docker-compose.yml up
 ```
 
-# Proxy and App add netowork
+# docker
+## Proxy and App add netowork with docker
 ```
 docker network create app_proxy
 ```
 
-# App build and run with docker
+## App build and run with docker
 ```
 docker build --rm -f build/Dockerfile --build-arg SSH_KEY="$(cat {private sshkey path})" -t app:latest . 
 docker run --rm -d --net app_proxy --name app app:latest
@@ -32,8 +37,8 @@ docker run --rm -d --net app_proxy --env-file=config/docker/app/local.env --name
 docker run --rm -d --net app_proxy --env-file=config/docker/app/local.env -p 8080:8080 --name app app:latest
 ```
 
-# Proxy build and run with docker
+## Proxy build and run with docker
 ```
 docker build --rm -f build/Proxy.Dockerfile -t proxy:latest .
-docker run --rm -d --env-file=config/docker/proxy/local.env -p 80:80 -p 443:443 --link app:app --name proxy proxy:latest
+docker run --rm -d --net app_proxy --env-file=config/docker/proxy/local.env -p 80:80 -p 443:443 --link app:app --name proxy proxy:latest
 ```
