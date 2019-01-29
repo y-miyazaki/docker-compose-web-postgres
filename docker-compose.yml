@@ -93,8 +93,8 @@ services:
         volumes:
             - .:${WORKING_DIR}
         container_name: ${APPLICATION}-app-cont
-        # logging:
-        #     driver: "fluentd"
-        #     options:
-        #         fluentd-address: "localhost:24224"
-        #         tag: "${FLUENTD_TAG_SERVICE}.${FLUENTD_TAG_APP}.{{.Name}}.stdout"
+        logging:
+            driver: "fluentd"
+            options:
+                fluentd-address: "localhost:24224"
+                tag: "${FLUENTD_TAG_SERVICE}.${FLUENTD_TAG_APP}.{{.Name}}.stdout"
