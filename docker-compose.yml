@@ -5,7 +5,7 @@ volumes:
     data-vol: # Volume to host db service data locally.
         driver: 'local'
 services: 
-    s3:
+    storage:
         image: ${S3_IMAGE}
         ports:
             - "${S3_OUT_PORT}:${S3_PORT}"
@@ -22,7 +22,7 @@ services:
             - "${DB_OUT_PORT}:${DB_PORT}"
         volumes:
             - data-vol:/var/lib/postgresql/data
-            - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+            - ./db/database.sql:/docker-entrypoint-initdb.d/database.sql
         environment:
             - POSTGRES_USER=${DB_USER}
             - POSTGRES_DBNAME=${DB_DBNAME}   
@@ -80,12 +80,12 @@ services:
                 - SSH_KEY=${SSH_KEY}
         links:
             - db:db 
-            - s3:s3
+            - storage:storage
             - redis:redis
             - fluentd:fluentd
         depends_on:
             - db
-            - s3
+            - storage
             - redis
             - fluentd
         ports:
@@ -93,8 +93,8 @@ services:
         volumes:
             - .:${WORKING_DIR}
         container_name: ${APPLICATION}-app-cont
-        logging:
-            driver: "fluentd"
-            options:
-                fluentd-address: "localhost:24224"
-                tag: "${FLUENTD_TAG_SERVICE}.${FLUENTD_TAG_APP}.{{.Name}}.stdout"
+        # logging:
+        #     driver: "fluentd"
+        #     options:
+        #         fluentd-address: "localhost:24224"
+        #         tag: "${FLUENTD_TAG_SERVICE}.${FLUENTD_TAG_APP}.{{.Name}}.stdout"

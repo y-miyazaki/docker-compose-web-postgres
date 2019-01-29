@@ -1,0 +1,13 @@
+{
+    "database": {
+        "host": "db",
+        "port": 5432,
+        "user": "postgres",
+        "pass": "pass",
+        "name": "testdb",
+        "logmode": true,
+        "conn_max_lifetime": 60000,
+        "max_idle_conn": 5,
+        "max_open_conn": 100
+    }
+}

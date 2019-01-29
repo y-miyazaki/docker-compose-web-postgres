@@ -7,6 +7,7 @@ WORKDIR /go/src/github.com/y-miyazaki/docker-compose-web-postgres
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache bash gcc musl-dev git mercurial openssh curl && \
+    apk add --no-cache postgresql-client && \
     rm -rf /var/lib/apt/lists/* && \
     rm /var/cache/apk/*
 
