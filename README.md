@@ -57,10 +57,10 @@ curl localhost
 # Etc...
 
 ```
--- remove all docker images
+# remove all docker images
 alias dockerallrmi='docker rmi -f $(docker images | awk '\''{print$3}'\'')'
--- stop all docker containers
+# stop all docker containers
 alias dockerallps='docker stop $(docker ps -a -q) | docker rm $(docker ps -a -q)'
--- remove all volumes
+# remove all volumes
 alias dockervolrm='docker volume rm $(docker volume ls -qf dangling=true)'
 ```
